@@ -35,9 +35,27 @@ html, body {
 
 .slider__button-down, .slider__button-up {
     display: flex;
+    position: relative;
     width: 50%;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+}
+
+.slider__button-img{
+    position: absolute;
+    max-width: 90%;
+    max-height: 90%;
+    top: 5%;
+    transition: all .5s ease-in-out;
+}
+
+.slider__button-img--up{
+    top: -100%;
+}
+
+.slider__button-img--down{
+    top: 100%;
 }
 
 .slider__button-down {

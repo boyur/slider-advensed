@@ -2,122 +2,115 @@ window.onload = function () {
   console.log("window load");
 
   (function () {
-    var btns = document.getElementById("btns");
+    var slide = document.getElementById("slide");
     var btnDown = document.getElementById("sliderBtnDown");
     var btnUp = document.getElementById("sliderBtnUp");
-    var imgTop = document.getElementById("imgTop");
-    var imagesPatch = 'img/';
-    var images = ['work-1.png', 'work-2.png', 'work-3.png', 'work-4.png'];
-    var positionSlide;
+    var imgDown = btnDown.getElementsByClassName("slider__button-img");
+    var imgUp = btnUp.getElementsByClassName("slider__button-img");
+    var imgTop = slide.getElementsByClassName("slider__slide-img");
 
-    var imgTagTop = imgTop.getElementsByTagName('img');
-    //var imgName = img[0].src.split(imagesPatch)[1];
+    var counter = 0;
+    var counterDown = 3;
+    var counterUp = 1;
+    var flag = true;
 
-    var imgDownNew = imgTagTop[0].cloneNode(true);
-    var imgTagDown;
+    console.log(counterFn(counter));
+    console.log(counterFn(counterDown));
+    console.log(counterFn(counterUp));
 
-    initSlider();
-
-    function initSlider() {
-      imgDownNew.classList.add("slider__button-img", "slider__button-img--down");
-      imgDownNew.setAttribute('src', imagesPatch + images[1]);
-
-      console.log(imgTagTop);
-
-      // вставим её перед текущей картинки
-      imgTagTop[0].parentNode.insertBefore(imgDownNew, imgTop.lastChild);
-
-      if (images.length > 2) {
-        for (var i = 2; i < images.length; i++) {
-          var imgDownPlus = imgTagTop[1].cloneNode(true);
-          imgDownPlus.classList.add("slider__button-img--down");
-          imgDownPlus.setAttribute('src', imagesPatch + images[i]);
-          imgTagTop[0].parentNode.insertBefore(imgDownPlus, imgTop.lastChild);
-          console.log("+1");
-        }
-      }
-
-      positionSlide = 0;
-
-      // Клонируем изображения в Down
-      var btnDownNew = imgTop.cloneNode(true);
-      btnDownNew.setAttribute('class', "slider__button-down");
-      btnDownNew.setAttribute('id', "sliderBtnDown");
-      btns.replaceChild(btnDownNew, btnDown);
-      imgTagDown = btnDownNew.getElementsByTagName('img');
-      console.log(imgTagDown);
-
-      imgTagDown[counter(positionSlide - 1)].style.visibility = 'visible';
-      imgTagDown[counter(positionSlide - 1)].style.top = '0';
-      imgTagDown[counter(positionSlide)].style.top = '-100%';
-      imgTagDown[counter(positionSlide)].style.visibility = 'hidden';
-      imgTagDown[counter(positionSlide + 2)].style.top = '-100%';
-      console.log("transition closed, poistion", positionSlide);
-      ////////////////
+    btnDown.addEventListener("click", down, false);
+    btnUp.addEventListener("click", up, false);
 
 
-      console.log(imgTop);
-      console.log(imgTop.getElementsByTagName('img'));
-
-      btnDownNew.addEventListener("click", DownImg);
-      btnUp.addEventListener("click", UpImg);
+    function down() {
+      scrollSlide(-1);
     }
 
-    function counter(positionSlide) {
+    function up() {
+      scrollSlide(1);
+    }
+
+    function scrollSlide(direction) {
+
+      // direction -1 = down, 1 = up
+
+
+      if (direction == undefined) {
+        return;
+      }
+
+      var activeDown = btnDown.getElementsByClassName("active");
+      var activeUp = btnUp.getElementsByClassName("active");
+      var activeSlide = slide.getElementsByClassName("active-slide");
+
+
+      if (flag) {
+        flag = false;
+
+        console.log(activeDown[0]);
+
+        activeDown[0].style.top = '110%';
+        activeSlide[0].style.visibility = 'hidden';
+        imgTop[counterFn(counter + direction)].style.visibility = 'visible';
+        //console.log(counterFn(counter));
+
+        imgDown[counterFn(counterDown + direction)].style.visibility = 'visible';
+        imgDown[counterFn(counterDown + direction)].style.top = '0';
+
+        console.log(imgUp);
+
+        activeUp[0].style.top = '-110%';
+        imgUp[counterFn(counterUp + direction)].style.visibility = 'visible';
+        imgUp[counterFn(counterUp + direction)].style.top = '0';
+
+        activeDown[0].addEventListener("transitionend", transitionEnd, false);
+
+        function transitionEnd() {
+
+          if (flag) {
+            return;
+          }
+
+          activeSlide[0].style.visibility = 'hidden';
+          activeSlide[0].classList.remove("active-slide");
+          imgTop[counterFn(counterDown)].classList.add("active-slide");
+
+          activeDown[0].style.visibility = 'hidden';
+          activeDown[0].style.top = '-110%';
+          activeDown[0].classList.remove("active");
+          imgDown[counterFn(counterDown + direction)].classList.add("active");
+
+          activeUp[0].style.visibility = 'hidden';
+          activeUp[0].style.top = '110%';
+          activeUp[0].classList.remove("active");
+          imgUp[counterFn(counterUp + direction)].classList.add("active");
+
+          counter = (counterFn(counter + direction));
+          counterDown = (counterFn(counterDown + direction));
+          counterUp = (counterFn(counterUp + direction));
+
+          console.log(counter);
+          console.log(counterDown);
+          console.log(counterUp);
+
+          flag = true;
+          console.log("Анимация закончена");
+        }
+      }
+    }
+
+    function counterFn(positionSlide) {
       var result;
       if (positionSlide < 0) {
-        result = images.length + positionSlide;
-      } else if (positionSlide >= images.length) {
-        result = positionSlide - images.length;
+        result = imgDown.length + positionSlide;
+      } else if (positionSlide >= imgDown.length) {
+        result = positionSlide - imgDown.length;
       } else {
         result = positionSlide;
       }
-
       return result;
     }
 
-    function DownImg() {
-      ////////////
-      console.log(counter(positionSlide));
-      console.log(counter(positionSlide - 1));
-      console.log(counter(positionSlide - 2));
-      ///////////
-      imgTagDown[counter(positionSlide - 2)].style.visibility = 'visible';
-      imgTagDown[counter(positionSlide - 2)].style.top = '0';
-      imgTagDown[counter(positionSlide - 1)].style.top = '100%';
-      imgTagDown[counter(positionSlide)].style.visibility = 'hidden';
-      imgTagDown[counter(positionSlide)].style.top = '-100%';
-
-      positionSlide = counter(positionSlide - 1);
-      console.log("transition closed, poistion", positionSlide);
-    }
-
-    function UpImg() {
-      ////////////
-      console.log(counter(positionSlide));
-      console.log(counter(positionSlide - 1));
-      console.log(counter(positionSlide - 2));
-      ///////////
-      img[counter(positionSlide)].style.visibility = 'visible';
-      img[counter(positionSlide)].style.top = '0';
-      img[counter(positionSlide - 1)].style.top = '-100%';
-      img[counter(positionSlide - 2)].style.visibility = 'hidden';
-      img[counter(positionSlide - 2)].style.top = '100%';
-
-      positionSlide = counter(positionSlide);
-      console.log("transition closed, poistion", positionSlide);
-    }
-
-
-    // Ищем элемент в массиве
-    function find(array, value) {
-
-      for (var i = 0; i < array.length; i++) {
-        if (array[i] == value) return i;
-      }
-
-      return -1;
-    }
 
   })();
 };

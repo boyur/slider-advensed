@@ -32,9 +32,6 @@ window.onload = function () {
 
     function scrollSlide(direction) {
 
-      // direction -1 = down, 1 = up
-
-
       if (direction == undefined) {
         return;
       }
@@ -52,7 +49,6 @@ window.onload = function () {
         activeDown[0].style.top = '110%';
         activeSlide[0].style.visibility = 'hidden';
         imgTop[counterFn(counter + direction)].style.visibility = 'visible';
-        //console.log(counterFn(counter));
 
         imgDown[counterFn(counterDown + direction)].style.visibility = 'visible';
         imgDown[counterFn(counterDown + direction)].style.top = '0';
@@ -63,7 +59,11 @@ window.onload = function () {
         imgUp[counterFn(counterUp + direction)].style.visibility = 'visible';
         imgUp[counterFn(counterUp + direction)].style.top = '0';
 
-        activeDown[0].addEventListener("transitionend", transitionEnd, false);
+        if (!flag && direction == -1){
+          activeDown[0].addEventListener("transitionend", transitionEnd, false);
+        } else if (!flag && direction == 1) {
+          activeUp[0].addEventListener("transitionend", transitionEnd, false);
+        }
 
         function transitionEnd() {
 
@@ -73,7 +73,13 @@ window.onload = function () {
 
           activeSlide[0].style.visibility = 'hidden';
           activeSlide[0].classList.remove("active-slide");
-          imgTop[counterFn(counterDown)].classList.add("active-slide");
+
+          if (direction == -1){
+            imgTop[counterFn(counterDown)].classList.add("active-slide");
+          } else {
+            imgTop[counterFn(counterUp)].classList.add("active-slide");
+          }
+
 
           activeDown[0].style.visibility = 'hidden';
           activeDown[0].style.top = '-110%';
@@ -93,8 +99,8 @@ window.onload = function () {
           console.log(counterDown);
           console.log(counterUp);
 
+          console.log("animation end");
           flag = true;
-          console.log("Анимация закончена");
         }
       }
     }

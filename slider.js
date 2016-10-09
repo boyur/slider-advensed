@@ -2,54 +2,110 @@ window.onload = function () {
   console.log("window load");
 
   (function () {
+    var btns = document.getElementById("btns");
     var btnDown = document.getElementById("sliderBtnDown");
     var btnUp = document.getElementById("sliderBtnUp");
     var imgTop = document.getElementById("imgTop");
     var imagesPatch = 'img/';
-    var images = ['work-1.png','work-2.png','work-3.png','work-4.png'];
+    var images = ['work-1.png', 'work-2.png', 'work-3.png', 'work-4.png'];
+    var positionSlide;
 
-    var img = btnDown.getElementsByTagName('img');
-    var imgName = img[0].src.split(imagesPatch)[1];
+    var imgTagTop = imgTop.getElementsByTagName('img');
+    //var imgName = img[0].src.split(imagesPatch)[1];
 
-    var imgUp = img[0].cloneNode(true);
-    var imgDown = img[0].cloneNode(true);
+    var imgDownNew = imgTagTop[0].cloneNode(true);
+    var imgTagDown;
 
     initSlider();
 
     function initSlider() {
-      btnDown.addEventListener("click", DownImg);
-      btnUp.addEventListener("click", UpImg);
-      // добавляем классы
-      imgUp.classList.add("slider__button-img", "slider__button-img--up");
-      imgUp.setAttribute('src', imagesPatch + images[0]);
-      imgDown.classList.add("slider__button-img", "slider__button-img--down");
-      imgDown.setAttribute('src', imagesPatch + images[2]);
+      imgDownNew.classList.add("slider__button-img", "slider__button-img--down");
+      imgDownNew.setAttribute('src', imagesPatch + images[1]);
 
-      console.log(img);
+      console.log(imgTagTop);
 
-      // Определяем номер элемента в масиве
-      console.log(find(images, imgName));
-
-      // вставим её после текущей картинки
-      img[0].parentNode.insertBefore(imgUp, btnDown.firstChild);
       // вставим её перед текущей картинки
-      img[0].parentNode.insertBefore(imgDown, btnDown.lastChild);
+      imgTagTop[0].parentNode.insertBefore(imgDownNew, imgTop.lastChild);
+
+      if (images.length > 2) {
+        for (var i = 2; i < images.length; i++) {
+          var imgDownPlus = imgTagTop[1].cloneNode(true);
+          imgDownPlus.classList.add("slider__button-img--down");
+          imgDownPlus.setAttribute('src', imagesPatch + images[i]);
+          imgTagTop[0].parentNode.insertBefore(imgDownPlus, imgTop.lastChild);
+          console.log("+1");
+        }
+      }
+
+      positionSlide = 0;
+
+      // Клонируем изображения в Down
+      var btnDownNew = imgTop.cloneNode(true);
+      btnDownNew.setAttribute('class', "slider__button-down");
+      btnDownNew.setAttribute('id', "sliderBtnDown");
+      btns.replaceChild(btnDownNew, btnDown);
+      imgTagDown = btnDownNew.getElementsByTagName('img');
+      console.log(imgTagDown);
+
+      imgTagDown[counter(positionSlide - 1)].style.visibility = 'visible';
+      imgTagDown[counter(positionSlide - 1)].style.top = '0';
+      imgTagDown[counter(positionSlide)].style.top = '-100%';
+      imgTagDown[counter(positionSlide)].style.visibility = 'hidden';
+      imgTagDown[counter(positionSlide + 2)].style.top = '-100%';
+      console.log("transition closed, poistion", positionSlide);
+      ////////////////
 
 
-      console.log(btnDown);
-      console.log(btnDown.getElementsByTagName('img'));
+      console.log(imgTop);
+      console.log(imgTop.getElementsByTagName('img'));
+
+      btnDownNew.addEventListener("click", DownImg);
+      btnUp.addEventListener("click", UpImg);
+    }
+
+    function counter(positionSlide) {
+      var result;
+      if (positionSlide < 0) {
+        result = images.length + positionSlide;
+      } else if (positionSlide >= images.length) {
+        result = positionSlide - images.length;
+      } else {
+        result = positionSlide;
+      }
+
+      return result;
     }
 
     function DownImg() {
+      ////////////
+      console.log(counter(positionSlide));
+      console.log(counter(positionSlide - 1));
+      console.log(counter(positionSlide - 2));
+      ///////////
+      imgTagDown[counter(positionSlide - 2)].style.visibility = 'visible';
+      imgTagDown[counter(positionSlide - 2)].style.top = '0';
+      imgTagDown[counter(positionSlide - 1)].style.top = '100%';
+      imgTagDown[counter(positionSlide)].style.visibility = 'hidden';
+      imgTagDown[counter(positionSlide)].style.top = '-100%';
 
-      img[0].style.top = '5%';
-      img[1].style.top = '100%';
-      console.log(img[1]);
-
+      positionSlide = counter(positionSlide - 1);
+      console.log("transition closed, poistion", positionSlide);
     }
 
     function UpImg() {
-      console.log('Up');
+      ////////////
+      console.log(counter(positionSlide));
+      console.log(counter(positionSlide - 1));
+      console.log(counter(positionSlide - 2));
+      ///////////
+      img[counter(positionSlide)].style.visibility = 'visible';
+      img[counter(positionSlide)].style.top = '0';
+      img[counter(positionSlide - 1)].style.top = '-100%';
+      img[counter(positionSlide - 2)].style.visibility = 'hidden';
+      img[counter(positionSlide - 2)].style.top = '100%';
+
+      positionSlide = counter(positionSlide);
+      console.log("transition closed, poistion", positionSlide);
     }
 
 
